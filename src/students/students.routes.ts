@@ -35,11 +35,16 @@ studentsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-// GET /domain/:domain - Récupérer les étudiants par domaine
-studentsRouter.get('/domain/:domain', async (req: Request, res: Response) => {
+// GET / - Récupérer les étudiants par domaine (via paramètre de requête)
+studentsRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const students = await studentsbydomain(req.params.domain as string);
-        res.json(students);
+        const domain = req.query.domain as string;
+        if (domain) {
+            const students = await studentsbydomain(domain);
+            res.json(students);
+        } else {
+            res.status(400).json({ error: 'Le paramètre de requête "domain" est requis' });
+        }
     } catch (error) {
         res.status(500).json({ error: 'Erreur serveur' });
     }
